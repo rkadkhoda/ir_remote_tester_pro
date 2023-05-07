@@ -72,6 +72,10 @@ uint8_t byte_cntr=0,temporary_data=0;
 uint8_t data_repository[255];
 uint8_t data_repository_to_binary[255];
 uint8_t data_display[40];
+uint8_t system_reverse[2];
+uint8_t data_reverse[1];
+
+
 bool tx_flag=0;
 uint8_t oled_convert_data[16]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 uint8_t oled_convert_data_decimal[10]={'0','1','2','3','4','5','6','7','8','9'};
@@ -169,7 +173,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 				{
 					
 					signal_state=3;
-					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_SET);
+					//HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_SET);++++++++++++++++++++++++
+					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_SET);//buzz
 				}
 				else
 				{
@@ -437,7 +442,7 @@ int main(void)
 				}
 			//	HAL_UART_Transmit(&huart1,(uint8_t *)&data_repository[i],1,100);
 			}
-			//************************
+			//************************assign Bytes
 			memset(data_display,0,sizeof(data_display));
 			for (uint8_t i=0;i<data_bit_lenght;i++)
 			{
@@ -446,6 +451,38 @@ int main(void)
 				
 			}
 			
+			for(int i=0;i<=3; i++){
+				HAL_UART_Transmit(&huart1,(uint8_t *)&data_display[i],1,100);
+			}
+			//reverse system & data bits
+			for (uint8_t i=0;i<16;i++)//sys
+			{
+				if((i%8)<4)
+				system_reverse[i/8]|=(data_display[1-(i/8)]&((0x01)<<(i%8)))<<(7-(2*(i%8)));
+				else if((i%8)>=4)
+				system_reverse[i/8]|=(data_display[1-(i/8)]&((0x01)<<(i%8)))>>((2*(i%8))-7);
+			}
+			for (uint8_t i=0;i<2;i++)
+			{
+				data_display[i]=system_reverse[i];
+				//HAL_UART_Transmit(&huart1,(uint8_t *)&system_reverse[i],1,100);
+			}
+			memset(system_reverse,0,sizeof(system_reverse));
+			///
+			
+			for (uint8_t i=16;i<24;i++)//data
+			{
+				if((i%8)<4)
+				data_reverse[0]|=(data_display[2]&((0x01)<<(i%8)))<<(7-(2*(i%8)));
+				else if((i%8)>=4)
+				data_reverse[0]|=(data_display[2]&((0x01)<<(i%8)))>>((2*(i%8))-7);
+			}
+			for (uint8_t i=2;i<3;i++)
+			{
+				data_display[i]=data_reverse[0];
+				HAL_UART_Transmit(&huart1,(uint8_t *)&data_reverse[0],1,100);
+			}
+			memset(data_reverse,0,sizeof(data_reverse));
 			//****************************************tedad
 			if(((data_bit_lenght-1)%8)==0)
 			{
