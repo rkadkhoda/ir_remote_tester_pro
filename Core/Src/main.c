@@ -169,6 +169,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 				{
 					
 					signal_state=3;
+					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_SET);
 				}
 				else
 				{
@@ -209,7 +210,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 					tx_flag=1;
 					HAL_TIM_Base_Stop(&htim14);
 					HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
+					
 				}
+				
 				break;
 				
 /*-------------------------------------------------------------------------*/
@@ -407,6 +410,7 @@ int main(void)
 		{//HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_RESET);
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&data_bit_lenght,1,100);
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&data_repository,32,100);
+			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_RESET);
 			for(uint8_t i=0;i<data_bit_lenght-1;i++)//find longest width
 			{
 				if(bzgtrn<data_repository[i])
@@ -468,6 +472,7 @@ int main(void)
 			riztrn=0;
 			
 			HAL_Delay(200);
+			
 			//HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
 			HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&signal_state,1,100);
