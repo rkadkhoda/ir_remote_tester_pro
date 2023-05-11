@@ -103,6 +103,7 @@ uint8_t name_monitor[30]={'A','B','C','D','E','F','G','H','I','J','K','L','M','N
 
 struct at24c256
 {
+	uint8_t read_lst_loc[2];
 	uint8_t	read_data[32];
 	uint8_t saver_buff[32];
 	uint8_t last_add[2];//0...0x7fff
@@ -259,15 +260,29 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			else//long holding
 			{
 				///saving to at24
-			//	HAL_I2C_Mem_Write(&hi2c1,0xA0,(3<<6),2,write_data,20,1000);
-				//memset(at24.saver_buff,0,32);
+				HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 0*32, 2, at24.read_lst_loc, 2, 1000);//find index for saving
+				if(at24.read_lst_loc[0]<255)
+				{
+				at24.read_lst_loc[0]++;
+				}
+				else if(at24.read_lst_loc[0]>=255 &&at24.read_lst_loc[1]<255 )
+				{
+					at24.read_lst_loc[0]=0;
+					at24.read_lst_loc[1]++;
+				}
+				else
+				{
+					at24.read_lst_loc[0]=0;
+					at24.read_lst_loc[1]=0;
+				}	
+				HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,0*32,2,at24.read_lst_loc,2,1000);
+				memset(at24.saver_buff,0,32);
 			//	HAL_I2C_mem
 				memcpy(at24.saver_buff+2,data_display,4);
 				memcpy(at24.saver_buff+12,my_name.name_buf,my_name.name_x_loc);//my_name.name_buff_index
-				
-				//HAL_UART_Transmit(&huart1,(uint8_t *)&at24.saver_buff,32,100);
-				//HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,0*32,2,at24.saver_buff,32,1000);
-				HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,0*32,2,at24.saver_buff,32,1000);
+				memcpy(at24.saver_buff,at24.read_lst_loc,2);
+				HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,65,2,at24.saver_buff,2,1000);
+				//HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,((255*at24.read_lst_loc[1])+at24.read_lst_loc[0])*32,2,at24.saver_buff,32,1000);
 				lcd_manager(save_notif_layer);
 			
 			}
@@ -389,9 +404,15 @@ int main(void)
 		my_menu.layer=start_up_layer;
 		lcd_manager(my_menu.layer);
 		//HAL_I2C_Mem_Write(&hi2c1,AT24ADDRESS,1,2,data_display,20,1000);
-						HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 0*32, 2, at24.read_data, 32, 1000);
+		//for(uint32_t i=0;i<10;i++)
+	//	{
+							HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 65, 2, at24.read_data, 32, 1000);
 		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
 		
+						HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS,0*32, 2, at24.read_data, 32, 1000);
+		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
+			
+		//}
 				HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 1*32, 2, at24.read_data, 32, 1000);
 		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
 		
@@ -399,6 +420,15 @@ int main(void)
 		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
 		
 						HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 3*32, 2, at24.read_data, 32, 1000);
+		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
+		
+						HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 4*32, 2, at24.read_data, 32, 1000);
+		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
+		
+				HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 5*32, 2, at24.read_data, 32, 1000);
+		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
+		
+						HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 65, 2, at24.read_data, 32, 1000);
 		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
   while (1)
   {
