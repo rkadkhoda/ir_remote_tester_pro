@@ -1360,21 +1360,21 @@ Image Symbol Table
     i.__scatterload_zeroinit                 0x08001d60   Section       14  handlers.o(i.__scatterload_zeroinit)
     i.lcd_manager                            0x08001d70   Section        0  main.o(i.lcd_manager)
     i.main                                   0x08002074   Section        0  main.o(i.main)
-    i.ssd1306_DrawPixel                      0x08002480   Section        0  ssd1306.o(i.ssd1306_DrawPixel)
-    i.ssd1306_Fill                           0x080024c4   Section        0  ssd1306.o(i.ssd1306_Fill)
-    i.ssd1306_Init                           0x080024e8   Section        0  ssd1306.o(i.ssd1306_Init)
-    i.ssd1306_SetCursor                      0x080025b4   Section        0  ssd1306.o(i.ssd1306_SetCursor)
-    i.ssd1306_UpdateScreen                   0x080025c0   Section        0  ssd1306.o(i.ssd1306_UpdateScreen)
-    i.ssd1306_WriteChar                      0x080025f4   Section        0  ssd1306.o(i.ssd1306_WriteChar)
-    i.ssd1306_WriteCommand                   0x08002684   Section        0  ssd1306.o(i.ssd1306_WriteCommand)
-    i.ssd1306_WriteData                      0x080026ac   Section        0  ssd1306.o(i.ssd1306_WriteData)
-    i.ssd1306_WriteString                    0x080026cc   Section        0  ssd1306.o(i.ssd1306_WriteString)
-    .constdata                               0x080026f8   Section     1900  ssd1306_fonts.o(.constdata)
-    Font7x10                                 0x080026f8   Data        1900  ssd1306_fonts.o(.constdata)
-    .constdata                               0x08002e64   Section     3420  ssd1306_fonts.o(.constdata)
-    Font11x18                                0x08002e64   Data        3420  ssd1306_fonts.o(.constdata)
-    .constdata                               0x08003bc0   Section       16  system_stm32f0xx.o(.constdata)
-    .constdata                               0x08003bd0   Section        8  system_stm32f0xx.o(.constdata)
+    i.ssd1306_DrawPixel                      0x08002484   Section        0  ssd1306.o(i.ssd1306_DrawPixel)
+    i.ssd1306_Fill                           0x080024c8   Section        0  ssd1306.o(i.ssd1306_Fill)
+    i.ssd1306_Init                           0x080024ec   Section        0  ssd1306.o(i.ssd1306_Init)
+    i.ssd1306_SetCursor                      0x080025b8   Section        0  ssd1306.o(i.ssd1306_SetCursor)
+    i.ssd1306_UpdateScreen                   0x080025c4   Section        0  ssd1306.o(i.ssd1306_UpdateScreen)
+    i.ssd1306_WriteChar                      0x080025f8   Section        0  ssd1306.o(i.ssd1306_WriteChar)
+    i.ssd1306_WriteCommand                   0x08002688   Section        0  ssd1306.o(i.ssd1306_WriteCommand)
+    i.ssd1306_WriteData                      0x080026b0   Section        0  ssd1306.o(i.ssd1306_WriteData)
+    i.ssd1306_WriteString                    0x080026d0   Section        0  ssd1306.o(i.ssd1306_WriteString)
+    .constdata                               0x080026fc   Section     1900  ssd1306_fonts.o(.constdata)
+    Font7x10                                 0x080026fc   Data        1900  ssd1306_fonts.o(.constdata)
+    .constdata                               0x08002e68   Section     3420  ssd1306_fonts.o(.constdata)
+    Font11x18                                0x08002e68   Data        3420  ssd1306_fonts.o(.constdata)
+    .constdata                               0x08003bc4   Section       16  system_stm32f0xx.o(.constdata)
+    .constdata                               0x08003bd4   Section        8  system_stm32f0xx.o(.constdata)
     .data                                    0x20000000   Section        6  ssd1306.o(.data)
     SSD1306                                  0x20000000   Data           6  ssd1306.o(.data)
     .data                                    0x20000008   Section        8  ssd1306_fonts.o(.data)
@@ -1501,20 +1501,20 @@ Image Symbol Table
     __scatterload_null                       0x08001d5f   Thumb Code     2  handlers.o(i.__scatterload_null)
     __scatterload_zeroinit                   0x08001d61   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
     lcd_manager                              0x08001d71   Thumb Code   670  main.o(i.lcd_manager)
-    main                                     0x08002075   Thumb Code  1000  main.o(i.main)
-    ssd1306_DrawPixel                        0x08002481   Thumb Code    58  ssd1306.o(i.ssd1306_DrawPixel)
-    ssd1306_Fill                             0x080024c5   Thumb Code    30  ssd1306.o(i.ssd1306_Fill)
-    ssd1306_Init                             0x080024e9   Thumb Code   200  ssd1306.o(i.ssd1306_Init)
-    ssd1306_SetCursor                        0x080025b5   Thumb Code     8  ssd1306.o(i.ssd1306_SetCursor)
-    ssd1306_UpdateScreen                     0x080025c1   Thumb Code    48  ssd1306.o(i.ssd1306_UpdateScreen)
-    ssd1306_WriteChar                        0x080025f5   Thumb Code   140  ssd1306.o(i.ssd1306_WriteChar)
-    ssd1306_WriteCommand                     0x08002685   Thumb Code    34  ssd1306.o(i.ssd1306_WriteCommand)
-    ssd1306_WriteData                        0x080026ad   Thumb Code    28  ssd1306.o(i.ssd1306_WriteData)
-    ssd1306_WriteString                      0x080026cd   Thumb Code    44  ssd1306.o(i.ssd1306_WriteString)
-    AHBPrescTable                            0x08003bc0   Data          16  system_stm32f0xx.o(.constdata)
-    APBPrescTable                            0x08003bd0   Data           8  system_stm32f0xx.o(.constdata)
-    Region$$Table$$Base                      0x08003bd8   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x08003bf8   Number         0  anon$$obj.o(Region$$Table)
+    main                                     0x08002075   Thumb Code  1002  main.o(i.main)
+    ssd1306_DrawPixel                        0x08002485   Thumb Code    58  ssd1306.o(i.ssd1306_DrawPixel)
+    ssd1306_Fill                             0x080024c9   Thumb Code    30  ssd1306.o(i.ssd1306_Fill)
+    ssd1306_Init                             0x080024ed   Thumb Code   200  ssd1306.o(i.ssd1306_Init)
+    ssd1306_SetCursor                        0x080025b9   Thumb Code     8  ssd1306.o(i.ssd1306_SetCursor)
+    ssd1306_UpdateScreen                     0x080025c5   Thumb Code    48  ssd1306.o(i.ssd1306_UpdateScreen)
+    ssd1306_WriteChar                        0x080025f9   Thumb Code   140  ssd1306.o(i.ssd1306_WriteChar)
+    ssd1306_WriteCommand                     0x08002689   Thumb Code    34  ssd1306.o(i.ssd1306_WriteCommand)
+    ssd1306_WriteData                        0x080026b1   Thumb Code    28  ssd1306.o(i.ssd1306_WriteData)
+    ssd1306_WriteString                      0x080026d1   Thumb Code    44  ssd1306.o(i.ssd1306_WriteString)
+    AHBPrescTable                            0x08003bc4   Data          16  system_stm32f0xx.o(.constdata)
+    APBPrescTable                            0x08003bd4   Data           8  system_stm32f0xx.o(.constdata)
+    Region$$Table$$Base                      0x08003bdc   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x08003bfc   Number         0  anon$$obj.o(Region$$Table)
     Font_7x10                                0x20000008   Data           8  ssd1306_fonts.o(.data)
     Font_11x18                               0x20000010   Data           8  ssd1306_fonts.o(.data)
     signal_state                             0x20000018   Data           1  main.o(.data)
@@ -1554,9 +1554,9 @@ Memory Map of the image
 
   Image Entry point : 0x080000b1
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00003c60, Max: 0x00004000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00003c64, Max: 0x00004000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Base: 0x08000000, Size: 0x00003bf8, Max: 0x00004000, ABSOLUTE)
+    Execution Region ER_IROM1 (Base: 0x08000000, Size: 0x00003bfc, Max: 0x00004000, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -1652,21 +1652,21 @@ Memory Map of the image
     0x08001d60   0x0000000e   Code   RO         3251    i.__scatterload_zeroinit  mc_p.l(handlers.o)
     0x08001d6e   0x00000002   PAD
     0x08001d70   0x00000304   Code   RO          228    i.lcd_manager       main.o
-    0x08002074   0x0000040c   Code   RO          229    i.main              main.o
-    0x08002480   0x00000044   Code   RO           12    i.ssd1306_DrawPixel  ssd1306.o
-    0x080024c4   0x00000024   Code   RO           13    i.ssd1306_Fill      ssd1306.o
-    0x080024e8   0x000000cc   Code   RO           14    i.ssd1306_Init      ssd1306.o
-    0x080025b4   0x0000000c   Code   RO           16    i.ssd1306_SetCursor  ssd1306.o
-    0x080025c0   0x00000034   Code   RO           17    i.ssd1306_UpdateScreen  ssd1306.o
-    0x080025f4   0x00000090   Code   RO           18    i.ssd1306_WriteChar  ssd1306.o
-    0x08002684   0x00000028   Code   RO           19    i.ssd1306_WriteCommand  ssd1306.o
-    0x080026ac   0x00000020   Code   RO           20    i.ssd1306_WriteData  ssd1306.o
-    0x080026cc   0x0000002c   Code   RO           21    i.ssd1306_WriteString  ssd1306.o
-    0x080026f8   0x0000076c   Data   RO          194    .constdata          ssd1306_fonts.o
-    0x08002e64   0x00000d5c   Data   RO          195    .constdata          ssd1306_fonts.o
-    0x08003bc0   0x00000010   Data   RO         3184    .constdata          system_stm32f0xx.o
-    0x08003bd0   0x00000008   Data   RO         3185    .constdata          system_stm32f0xx.o
-    0x08003bd8   0x00000020   Data   RO         3247    Region$$Table       anon$$obj.o
+    0x08002074   0x00000410   Code   RO          229    i.main              main.o
+    0x08002484   0x00000044   Code   RO           12    i.ssd1306_DrawPixel  ssd1306.o
+    0x080024c8   0x00000024   Code   RO           13    i.ssd1306_Fill      ssd1306.o
+    0x080024ec   0x000000cc   Code   RO           14    i.ssd1306_Init      ssd1306.o
+    0x080025b8   0x0000000c   Code   RO           16    i.ssd1306_SetCursor  ssd1306.o
+    0x080025c4   0x00000034   Code   RO           17    i.ssd1306_UpdateScreen  ssd1306.o
+    0x080025f8   0x00000090   Code   RO           18    i.ssd1306_WriteChar  ssd1306.o
+    0x08002688   0x00000028   Code   RO           19    i.ssd1306_WriteCommand  ssd1306.o
+    0x080026b0   0x00000020   Code   RO           20    i.ssd1306_WriteData  ssd1306.o
+    0x080026d0   0x0000002c   Code   RO           21    i.ssd1306_WriteString  ssd1306.o
+    0x080026fc   0x0000076c   Data   RO          194    .constdata          ssd1306_fonts.o
+    0x08002e68   0x00000d5c   Data   RO          195    .constdata          ssd1306_fonts.o
+    0x08003bc4   0x00000010   Data   RO         3184    .constdata          system_stm32f0xx.o
+    0x08003bd4   0x00000008   Data   RO         3185    .constdata          system_stm32f0xx.o
+    0x08003bdc   0x00000020   Data   RO         3247    Region$$Table       anon$$obj.o
 
 
     Execution Region RW_IRAM1 (Base: 0x20000000, Size: 0x00000c50, Max: 0x00001000, ABSOLUTE)
@@ -1694,7 +1694,7 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-      3058        192          0         62        993       8336   main.o
+      3062        194          0         62        993       8348   main.o
        632         42          0          6       1024     280542   ssd1306.o
          0          0       5320         16          0       1438   ssd1306_fonts.o
         28          8        176          0       1024        620   startup_stm32f030x6.o
@@ -1712,7 +1712,7 @@ Image component sizes
          2          0         24          4          0       1087   system_stm32f0xx.o
 
     ----------------------------------------------------------------------
-      9432        566       5552        104       3048     348695   Object Totals
+      9436        568       5552        104       3048     348707   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         14          0          0          4          7          0   (incl. Padding)
 
@@ -1757,15 +1757,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      9800        582       5552        104       3048     346155   Grand Totals
-      9800        582       5552        104       3048     346155   ELF Image Totals
-      9800        582       5552        104          0          0   ROM Totals
+      9804        584       5552        104       3048     346167   Grand Totals
+      9804        584       5552        104       3048     346167   ELF Image Totals
+      9804        584       5552        104          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                15352 (  14.99kB)
+    Total RO  Size (Code + RO Data)                15356 (  15.00kB)
     Total RW  Size (RW Data + ZI Data)              3152 (   3.08kB)
-    Total ROM Size (Code + RO Data + RW Data)      15456 (  15.09kB)
+    Total ROM Size (Code + RO Data + RW Data)      15460 (  15.10kB)
 
 ==============================================================================
 

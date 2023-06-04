@@ -453,7 +453,6 @@ int main(void)
 			{
 				if(bzgtrn<data_repository[i])
 				bzgtrn=data_repository[i];
-				HAL_UART_Transmit(&huart1,(uint8_t *)&data_repository[i],1,100);
 			}
 			//***************************
 			riztrn=bzgtrn;
@@ -531,7 +530,7 @@ int main(void)
 			}
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&tedad,1,100);
 			for(int i=0;i<=tedad+1 ; i++){
-			//	HAL_UART_Transmit(&huart1,(uint8_t *)&data_display[i],1,100);
+				HAL_UART_Transmit(&huart1,(uint8_t *)&data_display[i],1,100);
 			}
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&data_display,tedad,100);
 			lcd_manager(home_layer);
