@@ -406,6 +406,7 @@ int main(void)
 		//HAL_I2C_Mem_Write(&hi2c1,AT24ADDRESS,1,2,data_display,20,1000);
 		//for(uint32_t i=0;i<10;i++)
 	//	{
+	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_3,GPIO_PIN_RESET);
 							HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 65, 2, at24.read_data, 32, 1000);
 		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
 		
@@ -430,6 +431,8 @@ int main(void)
 		
 						HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 65, 2, at24.read_data, 32, 1000);
 		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
+		
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_3,GPIO_PIN_RESET);
   while (1)
   {
 		if(__HAL_TIM_GET_COUNTER(&htim14)>=15*ms_converter && signal_state==3){
@@ -450,8 +453,10 @@ int main(void)
 			{
 				if(bzgtrn<data_repository[i])
 				bzgtrn=data_repository[i];
+				HAL_UART_Transmit(&huart1,(uint8_t *)&data_repository[i],1,100);
 			}
 			//***************************
+			riztrn=bzgtrn;
 			for(uint8_t i=0;i<data_bit_lenght-1;i++)//find  shortest width
 			{
 				if(riztrn>data_repository[i])
@@ -459,6 +464,8 @@ int main(void)
 			}
 			//***********************************avg
 			average=(riztrn+bzgtrn)/2;
+			HAL_UART_Transmit(&huart1,(uint8_t *)&riztrn,1,100);
+			HAL_UART_Transmit(&huart1,(uint8_t *)&bzgtrn,1,100);
 			//********************************assign bits from width
 			for(uint8_t i=0;i<data_bit_lenght;i++)
 			{
@@ -482,7 +489,7 @@ int main(void)
 			}
 			
 			for(int i=0;i<=3; i++){
-				HAL_UART_Transmit(&huart1,(uint8_t *)&data_display[i],1,100);
+				//HAL_UART_Transmit(&huart1,(uint8_t *)&data_display[i],1,100);
 			}
 			//reverse system & data bits
 			for (uint8_t i=0;i<16;i++)//sys
@@ -510,7 +517,7 @@ int main(void)
 			for (uint8_t i=2;i<3;i++)
 			{
 				data_display[i]=data_reverse[0];
-				HAL_UART_Transmit(&huart1,(uint8_t *)&data_reverse[0],1,100);
+				//HAL_UART_Transmit(&huart1,(uint8_t *)&data_reverse[0],1,100);
 			}
 			memset(data_reverse,0,sizeof(data_reverse));
 			//****************************************tedad
@@ -524,7 +531,7 @@ int main(void)
 			}
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&tedad,1,100);
 			for(int i=0;i<=tedad+1 ; i++){
-				HAL_UART_Transmit(&huart1,(uint8_t *)&data_display[i],1,100);
+			//	HAL_UART_Transmit(&huart1,(uint8_t *)&data_display[i],1,100);
 			}
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&data_display,tedad,100);
 			lcd_manager(home_layer);
@@ -728,7 +735,7 @@ static void MX_USART1_UART_Init(void)
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
+  if (HAL_HalfDuplex_Init(&huart1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -752,7 +759,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_4, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_4, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PA0 PA5 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_5;
@@ -760,8 +767,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1;
+  /*Configure GPIO pins : PA1 PA3 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_3;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
