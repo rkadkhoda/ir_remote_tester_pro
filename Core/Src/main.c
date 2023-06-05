@@ -70,6 +70,7 @@ int  bit_cntr=0;
 uint8_t signal_state=0;
 uint8_t byte_cntr=0,temporary_data=0;
 uint8_t data_repository[255];
+uint8_t data_sorter[255];
 uint8_t data_repository_to_binary[255];
 uint8_t data_display[40];
 uint8_t system_reverse[2];
@@ -131,6 +132,8 @@ struct name_menu my_name;
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void lcd_manager (uint8_t lcd_status);
+void swap(uint8_t* xp, uint8_t* yp);
+void selectionSort(uint8_t arr[], uint8_t n);
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {//HAL_UART_Transmit(&huart1,(uint8_t *)&signal_state,1,100);
 	//HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_4);
@@ -449,6 +452,7 @@ int main(void)
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&data_bit_lenght,1,100);
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&data_repository,32,100);
 			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_RESET);
+				
 			for(uint8_t i=0;i<data_bit_lenght-1;i++)//find longest width
 			{
 				if(bzgtrn<data_repository[i])
@@ -460,7 +464,18 @@ int main(void)
 			{
 				if(riztrn>data_repository[i])
 				riztrn=data_repository[i];
+				HAL_UART_Transmit(&huart1,(uint8_t *)&data_repository[i],1,100);
 			}
+			//***********************************sort
+			HAL_UART_Transmit(&huart1,(uint8_t *)(0xff),1,100);
+			memcpy(data_sorter,data_repository,255);
+			selectionSort(data_sorter, data_bit_lenght-1);
+			for(uint8_t i=0;i<data_bit_lenght-1;i++)//find  shortest width
+			{
+				HAL_UART_Transmit(&huart1,(uint8_t *)&data_sorter[i],1,100);
+			}
+			riztrn=data_sorter[1];
+			bzgtrn=data_sorter[data_bit_lenght-3];
 			//***********************************avg
 			average=(riztrn+bzgtrn)/2;
 			HAL_UART_Transmit(&huart1,(uint8_t *)&riztrn,1,100);
@@ -530,7 +545,7 @@ int main(void)
 			}
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&tedad,1,100);
 			for(int i=0;i<=tedad+1 ; i++){
-				HAL_UART_Transmit(&huart1,(uint8_t *)&data_display[i],1,100);
+			//	HAL_UART_Transmit(&huart1,(uint8_t *)&data_display[i],1,100);
 			}
 			//HAL_UART_Transmit(&huart1,(uint8_t *)&data_display,tedad,100);
 			lcd_manager(home_layer);
@@ -894,6 +909,33 @@ void lcd_manager (uint8_t lcd_status)
 		ssd1306_WriteString("DESIGNED BY OS REZA",Font_7x10 ,White); 
 		ssd1306_UpdateScreen();
 	}
+}
+
+void swap(uint8_t* xp, uint8_t* yp)
+{
+    uint8_t temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+  
+// Function to perform Selection Sort
+void selectionSort(uint8_t arr[], uint8_t n)
+{
+    uint8_t i, j, min_idx;
+  
+    // One by one move boundary of unsorted subarray
+    for (i = 0; i < n - 1; i++) {
+  
+        // Find the minimum element in unsorted array
+        min_idx = i;
+        for (j = i + 1; j < n; j++)
+            if (arr[j] < arr[min_idx])
+                min_idx = j;
+  
+        // Swap the found minimum element
+        // with the first element
+        swap(&arr[min_idx], &arr[i]);
+    }
 }
 /* USER CODE END 4 */
 
