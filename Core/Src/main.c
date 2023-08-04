@@ -78,6 +78,7 @@ uint8_t data_reverse[1];
 
 
 bool tx_flag=0;
+uint8_t search_res[20];
 uint8_t oled_convert_data[16]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 uint8_t oled_convert_data_decimal[10]={'0','1','2','3','4','5','6','7','8','9'};
 uint8_t bzgtrn=0;//most biggest data
@@ -85,6 +86,10 @@ uint8_t riztrn=0;//most smalling :) data
 uint8_t data_bit_lenght=0;//data len per bits
 uint8_t average=0;//average betwen riz and big
 uint8_t tedad=0;
+uint8_t	index_updater_flg=0;//flag for updating first loc (2B ) of at24
+
+				//while(!HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,0*32,2,at24.read_lst_loc,2,1000));
+uint8_t tst[32]={0};//
 //////////////////////////////////////////////////////////////////menu
 #define start_up_layer 0
 #define home_layer 1
@@ -100,7 +105,8 @@ struct menu
 };
 struct menu my_menu;
 /////////////////////////////////////////////////////////////////save menu
-uint8_t name_monitor[30]={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
+uint8_t name_monitor[37]={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+													'0','1','2','3','4','5','6','7','8','9'};
 
 struct at24c256
 {
@@ -131,6 +137,7 @@ struct name_menu my_name;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void searching (void);
 void lcd_manager (uint8_t lcd_status);
 void swap(uint8_t* xp, uint8_t* yp);
 void selectionSort(uint8_t arr[], uint8_t n);
@@ -264,36 +271,41 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			{
 				///saving to at24
 				HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 0*32, 2, at24.read_lst_loc, 2, 1000);//find index for saving
-				if(at24.read_lst_loc[0]<255)
+				if(at24.read_lst_loc[1]<255)
 				{
-				at24.read_lst_loc[0]++;
+				at24.read_lst_loc[1]++;
 				}
-				else if(at24.read_lst_loc[0]>=255 &&at24.read_lst_loc[1]<255 )
+				else if(at24.read_lst_loc[1]>=255 &&at24.read_lst_loc[0]<255 )
 				{
-					at24.read_lst_loc[0]=0;
-					at24.read_lst_loc[1]++;
+					at24.read_lst_loc[1]=0;
+					at24.read_lst_loc[0]++;
 				}
 				else
 				{
-					at24.read_lst_loc[0]=0;
 					at24.read_lst_loc[1]=0;
+					at24.read_lst_loc[0]=0;
 				}	
-				HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,0*32,2,at24.read_lst_loc,2,1000);
+				index_updater_flg=1;
+				//while(!HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,0*32,2,at24.read_lst_loc,2,1000));
 				memset(at24.saver_buff,0,32);
 			//	HAL_I2C_mem
 				memcpy(at24.saver_buff+2,data_display,4);
 				memcpy(at24.saver_buff+12,my_name.name_buf,my_name.name_x_loc);//my_name.name_buff_index
 				memcpy(at24.saver_buff,at24.read_lst_loc,2);
-				HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,65,2,at24.saver_buff,2,1000);
-				//HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,((255*at24.read_lst_loc[1])+at24.read_lst_loc[0])*32,2,at24.saver_buff,32,1000);
+				//while(!HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,1*32,2,at24.saver_buff,32,1000));
+				while(!HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,((255*at24.read_lst_loc[0])+at24.read_lst_loc[1])*32,2,at24.saver_buff,32,1000));
+				my_menu.layer=save_notif_layer;
 				lcd_manager(save_notif_layer);
+				
 			
 			}
 	
 		}
 	}
-		else if(my_menu.layer==start_up_layer && HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0)==1)
+		else if((my_menu.layer==start_up_layer|| my_menu.layer==save_notif_layer) && HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0)==1 )
 		{
+			memset(data_display,0,32);
+			my_name.name_x_loc=0;
 			my_menu.layer=home_layer;
 			lcd_manager(home_layer);
 		}
@@ -312,8 +324,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 				my_name.name_buff_index=0;
 			lcd_manager(save_layer);
 		}
-			else if(my_menu.layer==start_up_layer)
+			else if(my_menu.layer==start_up_layer || my_menu.layer==save_notif_layer)
 		{
+			memset(data_display,0,32);
+			my_name.name_x_loc=0;
 			my_menu.layer=home_layer;
 			lcd_manager(home_layer);
 		}
@@ -329,11 +343,20 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 					my_name.name_x_loc--;
 					lcd_manager(save_layer);
 				}
-			else if(my_menu.layer==start_up_layer)
+			else if(my_menu.layer==start_up_layer || my_menu.layer==save_notif_layer)
 		{
+			memset(data_display,0,32);
+			my_name.name_x_loc=0;
 			my_menu.layer=home_layer;
 			lcd_manager(home_layer);
 		}
+		else if(my_menu.layer==home_layer)
+		{
+			my_menu.layer=search_layer;
+			lcd_manager(search_layer);
+			searching();
+		}
+			
 	}
 	//*********************************************************
 	
@@ -349,8 +372,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			lcd_manager(save_layer);
 		}
 		//
-				else if(my_menu.layer==start_up_layer)
+				else if(my_menu.layer==start_up_layer || my_menu.layer==save_notif_layer)
 		{
+			memset(data_display,0,32);
+			my_name.name_x_loc=0;
 			my_menu.layer=home_layer;
 			lcd_manager(home_layer);
 		}
@@ -406,13 +431,20 @@ int main(void)
 		HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_4);
 		my_menu.layer=start_up_layer;
 		lcd_manager(my_menu.layer);
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_3,GPIO_PIN_RESET);
 		//HAL_I2C_Mem_Write(&hi2c1,AT24ADDRESS,1,2,data_display,20,1000);
 		//for(uint32_t i=0;i<10;i++)
 	//	{
-	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_3,GPIO_PIN_RESET);
-							HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 65, 2, at24.read_data, 32, 1000);
+		//HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS,0*32, 2, at24.read_data, 32, 1000);
+		//HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
+		//while(!HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,0*32,2,tst,32,100));
+	
+		HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS,0*32, 2, at24.read_data, 32, 1000);
 		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
 		
+		HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 1*32, 2, at24.read_data, 32, 1000);
+		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
+		/*
 						HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS,0*32, 2, at24.read_data, 32, 1000);
 		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
 			
@@ -433,11 +465,16 @@ int main(void)
 		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
 		
 						HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, 65, 2, at24.read_data, 32, 1000);
-		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);
+		HAL_UART_Transmit(&huart1,(uint8_t *)&at24.read_data,32,100);*/
 		
-		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_3,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_3,GPIO_PIN_RESET);
   while (1)
   {
+		if(index_updater_flg==1)
+		{
+			while(!HAL_I2C_Mem_Write(EEPROM_I2C,AT24ADDRESS,0*32,2,at24.read_lst_loc,2,1000));
+			index_updater_flg=0;
+		}
 		if(__HAL_TIM_GET_COUNTER(&htim14)>=15*ms_converter && signal_state==3){
 			HAL_NVIC_DisableIRQ(EXTI4_15_IRQn);
 			bit_cntr=0;
@@ -464,22 +501,22 @@ int main(void)
 			{
 				if(riztrn>data_repository[i])
 				riztrn=data_repository[i];
-				HAL_UART_Transmit(&huart1,(uint8_t *)&data_repository[i],1,100);
+				//HAL_UART_Transmit(&huart1,(uint8_t *)&data_repository[i],1,100);
 			}
 			//***********************************sort
 			HAL_UART_Transmit(&huart1,(uint8_t *)(0xff),1,100);
 			memcpy(data_sorter,data_repository,255);
 			selectionSort(data_sorter, data_bit_lenght-1);
-			for(uint8_t i=0;i<data_bit_lenght-1;i++)//find  shortest width
-			{
-				HAL_UART_Transmit(&huart1,(uint8_t *)&data_sorter[i],1,100);
-			}
+			//for(uint8_t i=0;i<data_bit_lenght-1;i++)//find  shortest width
+			//{
+				//HAL_UART_Transmit(&huart1,(uint8_t *)&data_sorter[i],1,100);
+			//}
 			riztrn=data_sorter[1];
 			bzgtrn=data_sorter[data_bit_lenght-3];
 			//***********************************avg
 			average=(riztrn+bzgtrn)/2;
-			HAL_UART_Transmit(&huart1,(uint8_t *)&riztrn,1,100);
-			HAL_UART_Transmit(&huart1,(uint8_t *)&bzgtrn,1,100);
+			//HAL_UART_Transmit(&huart1,(uint8_t *)&riztrn,1,100);
+			//HAL_UART_Transmit(&huart1,(uint8_t *)&bzgtrn,1,100);
 			//********************************assign bits from width
 			for(uint8_t i=0;i<data_bit_lenght;i++)
 			{
@@ -847,15 +884,22 @@ void lcd_manager (uint8_t lcd_status)
 		}
 			//show lenght
 			ssd1306_SetCursor(75,40);
-			ssd1306_WriteString("len:",Font_7x10 ,White); 
+			ssd1306_WriteString("len:",Font_7x10 ,White);
+		
 			ssd1306_SetCursor(105,40);
 			ssd1306_WriteChar(oled_convert_data[tedad/100],Font_7x10 ,White); 
+		
 					ssd1306_SetCursor(112,40);
 			ssd1306_WriteChar(oled_convert_data[tedad/10],Font_7x10 ,White); 
+		
 					ssd1306_SetCursor(119,40);
 			ssd1306_WriteChar(oled_convert_data[tedad%10],Font_7x10 ,White); 
+		
 					ssd1306_SetCursor(90,53);
 			ssd1306_WriteString("SAVE",Font_7x10 ,White); 
+		
+							ssd1306_SetCursor(0,53);
+			ssd1306_WriteString("Search",Font_7x10 ,White); 
 			ssd1306_UpdateScreen();
 	}
 	//*****************************************************************
@@ -906,11 +950,97 @@ void lcd_manager (uint8_t lcd_status)
 		ssd1306_WriteString("professional",Font_7x10 ,White);
 		
 		ssd1306_SetCursor(0,45);
-		ssd1306_WriteString("DESIGNED BY OS REZA",Font_7x10 ,White); 
+		ssd1306_WriteString("DESIGNED BY REZZ",Font_7x10 ,White); 
 		ssd1306_UpdateScreen();
 	}
+	
+		else if(lcd_status == search_layer)
+		{
+		ssd1306_Fill(Black);
+			
+		ssd1306_SetCursor(20,15);
+		ssd1306_WriteString("searching",Font_11x18 ,White); 
+		ssd1306_SetCursor(21,40);
+		ssd1306_WriteString(". . . ",Font_11x18 ,White); 
+			
+		ssd1306_UpdateScreen();
+			
+		}
+
+	
+}
+void searching (void)
+{
+uint8_t cmp=1;
+int x=0;
+
+for (x=0;x<1000;x++)
+{
+	HAL_I2C_Mem_Read(EEPROM_I2C, AT24ADDRESS, x*32, 2, at24.read_lst_loc, 32, 1000);
+	cmp=memcmp(at24.read_lst_loc+2,data_display,4);
+	if(cmp==0)
+	{
+		
+		memcpy(search_res,at24.read_lst_loc+12,10);//data
+		HAL_UART_Transmit(&huart1,(uint8_t *)&x,1,100);
+		for (int y=0;y<10;y++)
+		{
+			HAL_UART_Transmit(&huart1,(uint8_t *)&search_res[y],1,100);
+		}
+		break;
+	}
+}
+if(cmp==1)
+{
+			my_menu.layer=home_layer;
+			lcd_manager(home_layer);
+}
+else
+{
+ssd1306_Fill(Black);
+	
+ssd1306_SetCursor(0,0);
+ssd1306_WriteChar(search_res[0],Font_11x18 ,White);
+ssd1306_SetCursor((0)+11,0);
+ssd1306_WriteChar(search_res[1],Font_11x18 ,White); 
+	
+	ssd1306_SetCursor(22,0);
+ssd1306_WriteChar(search_res[2],Font_11x18 ,White);
+ssd1306_SetCursor((22)+11,0);
+ssd1306_WriteChar(search_res[3],Font_11x18 ,White); 
+	
+	ssd1306_SetCursor(44,0);
+ssd1306_WriteChar(search_res[4],Font_11x18 ,White);
+ssd1306_SetCursor((44)+11,0);
+ssd1306_WriteChar(search_res[5],Font_11x18 ,White); 
+	/*
+for(uint8_t i=0;i<4;i++)
+{
+if(i<=4){
+	ssd1306_SetCursor(i*22,0);
+	ssd1306_WriteChar(search_res[0],Font_11x18 ,White);
+	ssd1306_SetCursor((i*22)+11,0);
+	ssd1306_WriteChar(search_res[1],Font_11x18 ,White); 
+}
+else if(i<10 && i>=5){
+	ssd1306_SetCursor((i-5)*22,20);
+	ssd1306_WriteChar(search_res[2],Font_11x18 ,White); 
+	ssd1306_SetCursor(((i-5)*22)+11,20);
+	ssd1306_WriteChar(search_res[3],Font_11x18 ,White); 
 }
 
+else if(i>=10 && i<13){
+	ssd1306_SetCursor((i-10)*22,40);
+	ssd1306_WriteChar(search_res[4],Font_11x18 ,White); 
+	ssd1306_SetCursor(((i-10)*22)+11,40);
+	ssd1306_WriteChar(search_res[5],Font_11x18 ,White); 
+}
+}*/
+ssd1306_UpdateScreen();
+
+
+}
+}
 void swap(uint8_t* xp, uint8_t* yp)
 {
     uint8_t temp = *xp;
